@@ -30,4 +30,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
     path('wallet/reports/', views.reports, name='reports'),
+    path('wallet/forecast/', views.forecast_view, name='forecast'),
 ]

@@ -5,6 +5,7 @@ from .models import Expense
 from .forms import ExpenseForm
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime, timedelta 
+from .predictor import get_forecast
 
 def landing(request):
     return render(request, 'expenses/landing.html')
@@ -115,6 +116,14 @@ def reports(request):
             'amount': day['total'],
             'height': height_percent
         })
+ 
+    return render(request, 'expenses/reports.html', {
+        'report_data': report_data,
+        'total_all': total_all,
+        'current_period': period,
+        'gradient_css': gradient_css,
+        'bar_data': bar_data,
+    })
 
     return render(request, 'expenses/reports.html', {
         'report_data': report_data,
@@ -122,4 +131,16 @@ def reports(request):
         'current_period': period,
         'gradient_css': gradient_css,
         'bar_data': bar_data, # Передаем данные для столбиков
+    })
+@login_required
+def forecast_view(request):
+    # Получаем период из GET-запроса (по умолчанию 7 дней)
+    period = request.GET.get('period', '7')
+    
+    # Получаем прогноз (передаем период)
+    forecast_data = get_forecast(request.user, days=int(period))
+    
+    return render(request, 'expenses/forecast.html', {
+        'forecast_data': forecast_data,
+        'current_period': period,
     })
