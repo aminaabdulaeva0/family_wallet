@@ -1,0 +1,21 @@
+/* --- Переменные цветов --- */
+:root {
+    --primary-color: #800020; /* Бордовый */
+    --primary-hover: #5a0016;
+    --accent-color: #D4AF37;  /* Золотистый */
+    --bg-color: #FDFBF7;      /* Нежный бежевый фон */
+    --text-color: #333333;
+    --card-bg: #FFFFFF;
+    --danger-color: #e74c3c;
+    --success-color: #27ae60;
+}
+
+/* --- Базовые стили --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+a { text-decoration: none; }

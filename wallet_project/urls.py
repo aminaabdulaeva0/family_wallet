@@ -16,11 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from expenses import views # Импортируем views из нашего приложения
+from django.contrib.auth import views as auth_views  # Импорт для входа/выхода
+from expenses import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'), # Пустая строка означает главную страницу
-    path('delete/<int:expense_id>/', views.delete_expense, name='delete_expense'),
-    path('edit/<int:expense_id>/', views.index, name='edit_expense'),
+    path('', views.landing, name='landing'), 
+    path('wallet/', views.index, name='index'),
+    path('wallet/edit/<int:expense_id>/', views.index, name='edit_expense'),
+    path('wallet/delete/<int:expense_id>/', views.delete_expense, name='delete_expense'),
+    
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('register/', views.register, name='register'),
 ]
