@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Отчеты | FamilyWallet</title>
+    <!-- Подключаем наш общий файл стилей -->
     <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
     <style>
-        /* Локальные стили только для элементов отчетов */
+        /* Локальные стили для диаграмм */
         .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .filter-btn { padding: 8px 16px; border: 1px solid var(--primary-color); border-radius: 20px; color: var(--primary-color); text-decoration: none; font-weight: bold; transition: all 0.3s; font-size: 14px; }
         .filter-btn:hover, .filter-btn.active { background: var(--primary-color); color: white; }
@@ -30,7 +31,7 @@
     </style>
 </head>
 <body>
-    <!-- Сайдбар (стилизуется из style.css) -->
+    <!-- Левая панель -->
     <div class="sidebar">
         <h2>FamilyWallet</h2>
         <a href="/wallet/">Операции</a>
@@ -38,13 +39,15 @@
         <a href="#">Категории</a>
     </div>
 
+    <!-- Основной контент -->
     <div class="main-content">
-        <div class="card" style="background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto;">
+        <div class="card">
             <div class="report-header">
                 <h2>Аналитика</h2>
                 <div class="total-summary">Всего: {{ total_all }} ₽</div>
             </div>
 
+            <!-- Кнопки фильтра -->
             <div class="filters">
                 <a href="?period=today" class="filter-btn {% if current_period == 'today' %}active{% endif %}">Сегодня</a>
                 <a href="?period=3days" class="filter-btn {% if current_period == '3days' %}active{% endif %}">3 дня</a>
@@ -54,10 +57,12 @@
 
             {% if report_data %}
                 <div class="report-body">
+                    <!-- Круговая диаграмма -->
                     <div class="pie-chart-container">
                         <div class="pie-chart" style="background: {{ gradient_css }};"></div>
                     </div>
 
+                    <!-- Легенда -->
                     <div class="legend-container">
                         {% for item in report_data %}
                             <div class="report-item">
@@ -70,6 +75,7 @@
                     </div>
                 </div>
 
+                <!-- Столбики -->
                 {% if bar_data %}
                 <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
                     <h3 style="color: var(--text-color); margin-bottom: 20px;">Динамика по дням</h3>
