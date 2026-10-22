@@ -3,6 +3,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои операции | FamilyWallet</title>
     <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
     <style>
@@ -59,7 +60,7 @@
         <h2>FamilyWallet</h2>
         <a href="/wallet/" class="active">Операции</a>
         <a href="#">Счета (в разработке)</a>
-        <a href="#">Отчеты (в разработке)</a>
+        <a href="{% url 'reports' %}">Отчеты</a>
         <a href="#">Категории</a>
     </div>
 

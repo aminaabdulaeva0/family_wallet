@@ -3,6 +3,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamilyWallet | Семейный бюджет</title>
     <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
     <style>
@@ -32,6 +33,22 @@
         .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
         
         .chart-card-small { width: 280px; margin-right: 60px; border-left: 6px solid var(--accent-color); }
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 15px;
+    }
+    .nav-links {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .nav-links a {
+        margin-left: 0;
+    }
+}
     </style>
 </head>
 <body>
