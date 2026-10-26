@@ -6,6 +6,8 @@ from .forms import ExpenseForm
 from django.contrib.auth.forms import UserCreationForm
 from datetime import datetime, timedelta 
 from .predictor import get_forecast
+import calendar
+from datetime import datetime
 
 def landing(request):
     return render(request, 'expenses/landing.html')
@@ -185,5 +187,56 @@ def categories_view(request, category_name=None):
         'selected_expenses': selected_expenses,
         'selected_category_name': selected_category_name,
         'current_category': category_name,
+    })
+
+@login_required
+def calendar_view(request):
+    today = datetime.now()
+    year = int(request.GET.get('year', today.year))
+    month = int(request.GET.get('month', today.month))
+    selected_day = request.GET.get('day') # Получаем выбранный день
+
+    # Получаем сетку календаря
+    cal = calendar.monthcalendar(year, month)
+    
+    # Получаем расходы за этот месяц
+    expenses = Expense.objects.filter(
+        user=request.user, 
+        date__year=year, 
+        date__month=month
+    )
+    
+    # Суммы по дням
+    daily_sums = {}
+    for exp in expenses:
+        day = exp.date.day
+        daily_sums[day] = daily_sums.get(day, 0) + exp.amount
+
+    # Детализация за выбранный день
+    day_expenses = None
+    selected_day_num = None
+    if selected_day:
+        selected_day_num = int(selected_day)
+        day_expenses = expenses.filter(date__day=selected_day_num)
+
+    month_name = calendar.month_name[month].capitalize()
+    
+    prev_month = month - 1 if month > 1 else 12
+    prev_year = year if month > 1 else year - 1
+    next_month = month + 1 if month < 12 else 1
+    next_year = year if month < 12 else year + 1
+
+    return render(request, 'expenses/calendar.html', {
+        'cal': cal,
+        'year': year,
+        'month': month,
+        'month_name': month_name,
+        'daily_sums': daily_sums,
+        'prev_month': prev_month,
+        'prev_year': prev_year,
+        'next_month': next_month,
+        'next_year': next_year,
+        'day_expenses': day_expenses,
+        'selected_day_num': selected_day_num,
     })
 

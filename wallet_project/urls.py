@@ -33,4 +33,5 @@ urlpatterns = [
     path('wallet/forecast/', views.forecast_view, name='forecast'),
     path('wallet/categories/', views.categories_view, name='categories'),
     path('wallet/categories/<str:category_name>/', views.categories_view, name='category_detail'),
+    path('wallet/calendar/', views.calendar_view, name='calendar'),
 ]

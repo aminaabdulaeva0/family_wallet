@@ -1,0 +1,127 @@
+{% load dict_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь | FamilyWallet</title>
+    <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
+    <style>
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-title { font-size: 24px; font-weight: bold; color: var(--primary-color); }
+        .calendar-nav { display: flex; gap: 10px; }
+        .calendar-nav a { text-decoration: none; color: var(--primary-color); font-weight: bold; padding: 5px 10px; border: 1px solid var(--primary-color); border-radius: 5px; }
+        
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
+        .weekday { font-weight: bold; color: #555; padding-bottom: 10px; font-size: 14px; text-transform: uppercase;}
+        
+        .day-cell { 
+            background: #f8f9fa; 
+            padding: 15px 5px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            color: #333; /* Черный цвет текста для обычных дней */
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none; /* Убираем подчеркивание у ссылок */
+            transition: transform 0.2s;
+        }
+        
+        .day-cell:hover { background: #e9ecef; }
+        
+        /* Дни, где были траты */
+        .day-cell.has-expense { 
+            background: #d1e7dd; 
+            color: #0f5132; 
+            border: 2px solid #badbcc;
+            cursor: pointer;
+        }
+        .day-cell.has-expense:hover { transform: scale(1.05); background: #badbcc; }
+        .day-amount { font-size: 12px; margin-top: 5px; }
+        
+        /* Активный (выбранный) день */
+        .day-cell.active-day {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--accent-color);
+        }
+
+        .day-empty { background: transparent; border: none; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>FamilyWallet</h2>
+        <a href="/wallet/">Операции</a>
+        <a href="{% url 'reports' %}">Отчеты</a>
+        <a href="{% url 'forecast' %}">Прогноз</a>
+        <a href="{% url 'categories' %}">Категории</a>
+        <a href="{% url 'calendar' %}" class="active">Календарь</a>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <div class="calendar-header">
+                <div class="calendar-title">{{ month_name }} {{ year }}</div>
+                <div class="calendar-nav">
+                    <a href="?year={{ prev_year }}&month={{ prev_month }}">← Предыдущий</a>
+                    <a href="?year={{ next_year }}&month={{ next_month }}">Следующий →</a>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="weekday">Пн</div>
+                <div class="weekday">Вт</div>
+                <div class="weekday">Ср</div>
+                <div class="weekday">Чт</div>
+                <div class="weekday">Пт</div>
+                <div class="weekday">Сб</div>
+                <div class="weekday">Вс</div>
+
+                {% for week in cal %}
+                    {% for day in week %}
+                        {% if day == 0 %}
+                            <div class="day-cell day-empty"></div>
+                        {% else %}
+                            {% if day in daily_sums %}
+                                <!-- Если есть траты, делаем ссылку с параметрами года, месяца и дня -->
+                                <a href="?year={{ year }}&month={{ month }}&day={{ day }}" class="day-cell has-expense {% if selected_day_num == day %}active-day{% endif %}">
+                                    {{ day }}
+                                    <div class="day-amount">-{{ daily_sums|get_item:day }} ₽</div>
+                                </a>
+                            {% else %}
+                                <div class="day-cell">{{ day }}</div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <!-- Блок с детализацией за выбранный день -->
+            {% if day_expenses %}
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 20px;">Траты за {{ selected_day_num }} {{ month_name }}</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        {% for expense in day_expenses %}
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <strong>{{ expense.title }}</strong>
+                                    <br>
+                                    <small style="color: #888;">{{ expense.get_category_display }}</small>
+                                </div>
+                                <div style="font-weight: bold; color: var(--primary-color); font-size: 18px;">
+                                    {{ expense.amount }} ₽
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
