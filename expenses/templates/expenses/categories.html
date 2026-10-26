@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Категории | FamilyWallet</title>
+    <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
+    <style>
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .cat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: var(--text-color);
+            border-left: 5px solid var(--accent-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .cat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .cat-card.active {
+            border-left: 5px solid var(--primary-color);
+            background: #fff9f9;
+        }
+        .cat-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .cat-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .cat-count {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .expense-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>FamilyWallet</h2>
+        <a href="/wallet/">Операции</a>
+        <a href="{% url 'reports' %}">Отчеты</a>
+        <a href="{% url 'forecast' %}">Прогноз</a>
+        <a href="{% url 'categories' %}" class="active">Категории</a>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid var(--accent-color);">
+                <h2 style="margin: 0; color: var(--primary-color);">Ваши категории</h2>
+                <div style="font-size: 20px; font-weight: bold;">Всего: {{ total_spent }} ₽</div>
+            </div>
+
+            {% if categories_data %}
+                <div class="cat-grid">
+                    {% for cat in categories_data %}
+                        <a href="?category={{ cat.key }}" class="cat-card {% if current_category == cat.key %}active{% endif %}">
+                            <div>
+                                <div class="cat-title">{{ cat.name }}</div>
+                                <div class="cat-amount">{{ cat.amount }} ₽</div>
+                            </div>
+                            <div class="cat-count">{{ cat.count }} операций</div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="text-align: center; color: #888;">У вас пока нет расходов.</p>
+            {% endif %}
+
+            <!-- Блок с детализацией по выбранной категории -->
+            {% if selected_expenses %}
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 20px;">Детализация: {{ selected_category_name }}</h3>
+                    <div class="expense-list">
+                        {% for expense in selected_expenses %}
+                            <div class="expense-item">
+                                <div>
+                                    <strong>{{ expense.title }}</strong>
+                                    <br>
+                                    <small style="color: #888;">{{ expense.date }}</small>
+                                </div>
+                                <div style="font-weight: bold; color: var(--primary-color); font-size: 18px;">
+                                    {{ expense.amount }} ₽
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

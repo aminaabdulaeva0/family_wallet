@@ -144,3 +144,46 @@ def forecast_view(request):
         'forecast_data': forecast_data,
         'current_period': period,
     })
+@login_required
+def categories_view(request, category_name=None):
+    # Читаем категорию из GET-запроса (если она есть)
+    if not category_name:
+        category_name = request.GET.get('category', None)
+
+    # Получаем все расходы пользователя
+    expenses = Expense.objects.filter(user=request.user).order_by('-date')
+    
+    # Словарь для перевода технического названия в русское
+    category_names = dict(Expense.CATEGORY_CHOICES)
+    
+    # Считаем сумму по каждой категории
+    categories_data = []
+    total_spent = 0
+    
+    for key, name in Expense.CATEGORY_CHOICES:
+        cat_expenses = expenses.filter(category=key)
+        amount = cat_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        if amount > 0:
+            categories_data.append({
+                'key': key,
+                'name': name,
+                'amount': amount,
+                'count': cat_expenses.count()
+            })
+            total_spent += amount
+
+    # Если выбрана конкретная категория, показываем список трат в ней
+    selected_expenses = None
+    selected_category_name = None
+    if category_name:
+        selected_expenses = expenses.filter(category=category_name)
+        selected_category_name = category_names.get(category_name, category_name)
+
+    return render(request, 'expenses/categories.html', {
+        'categories_data': categories_data,
+        'total_spent': total_spent,
+        'selected_expenses': selected_expenses,
+        'selected_category_name': selected_category_name,
+        'current_category': category_name,
+    })
+

@@ -31,4 +31,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('wallet/reports/', views.reports, name='reports'),
     path('wallet/forecast/', views.forecast_view, name='forecast'),
+    path('wallet/categories/', views.categories_view, name='categories'),
+    path('wallet/categories/<str:category_name>/', views.categories_view, name='category_detail'),
 ]
