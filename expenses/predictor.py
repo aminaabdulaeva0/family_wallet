@@ -19,7 +19,7 @@ def get_forecast(user, days=7):
     df = df.rename(columns={'date': 'ds', 'amount': 'y'})
     
     # Защита от выбросов (не больше 100к в день)
-    df['y'] = df['y'].clip(upper=100000)
+    df['y'] = df['y'].apply(lambda x: x if x < 50000 else 50000)
 
     m = Prophet(daily_seasonality=False, weekly_seasonality=True, yearly_seasonality=False)
     m.fit(df)

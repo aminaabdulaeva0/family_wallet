@@ -7,103 +7,105 @@
     <title>Мои операции | FamilyWallet</title>
     <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
     <style>
-        body { display: flex; height: 100vh; overflow: hidden; }
-
-        /* Левая панель */
-        .sidebar { width: 250px; background-color: var(--primary-color); color: white; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
-        .sidebar h2 { margin-top: 0; color: var(--accent-color); margin-bottom: 30px; }
-        .sidebar a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 12px 15px; margin: 5px 0; border-radius: 8px; display: block; font-weight: 500; transition: all 0.3s; }
-        .sidebar a:hover { background-color: rgba(255,255,255,0.1); color: white; }
-        .sidebar .active { background-color: rgba(255,255,255,0.15); color: white; font-weight: bold; border-left: 4px solid var(--accent-color); }
-
-        /* Центральная часть */
-        .main-content { flex-grow: 1; padding: 30px 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .header-panel h1 { color: var(--text-color); }
-
-        /* Карточки */
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
-        /* Плашка с суммой */
-        .total-card { background: linear-gradient(135deg, var(--primary-color), #5a0016); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(128, 0, 32, 0.25); border-left: 6px solid var(--accent-color); }
-        .total-card h3 { margin: 0; font-weight: normal; font-size: 16px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
-        .total-card h2 { margin: 10px 0 0 0; font-size: 42px; }
-
-        /* Форма */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; transition: border 0.3s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-color); }
-        
-        .btn-submit { background: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s; }
-        .btn-submit:hover { background: var(--primary-hover); }
-
-        /* Список расходов */
-        .expense-list { display: flex; flex-direction: column; gap: 12px; }
-        .expense-item { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--card-bg); border-radius: 10px; border-left: 5px solid var(--accent-color); box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; }
-        .expense-item:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-        
-        .expense-info strong { font-size: 18px; color: var(--text-color); }
-        .expense-info small { color: #888; }
-        
-        .expense-actions { display: flex; align-items: center; gap: 20px; }
-        .expense-amount { font-weight: bold; color: var(--primary-color); font-size: 20px; }
-        .action-icon { text-decoration: none; font-size: 20px; opacity: 0.5; transition: opacity 0.2s, transform 0.2s; cursor: pointer; }
-        .action-icon:hover { opacity: 1; transform: scale(1.1); }
-        .btn-logout { background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 16px; font-weight: bold; margin-left: 15px; }
-        .btn-logout:hover { text-decoration: underline; }
+        /* Специфичные стили для этой страницы */
+        .card form {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Две колонки для полей */
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .card form {
+                grid-template-columns: 1fr; /* Одна колонка на телефоне */
+            }
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+        }
+        .btn-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+            grid-column: span 2; /* Кнопка на всю ширину */
+            justify-self: start;
+        }
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+        /* Стили для заголовков в форме */
+        .form-group-full {
+            grid-column: span 2;
+        }
     </style>
 </head>
 <body>
-
-    <!-- Левая панель -->
     <div class="sidebar">
         <h2>FamilyWallet</h2>
-    <a href="/wallet/" class="active">Операции</a>
-    <a href="{% url 'reports' %}">Отчеты</a>
-    <a href="{% url 'forecast' %}">Прогноз</a>
-    <a href="#">Категории</a>
+        <a href="/wallet/" class="active">Операции</a>
+        <a href="{% url 'reports' %}">Отчеты</a>
+        <a href="{% url 'forecast' %}">Прогноз</a>
+        <a href="#">Категории</a>
     </div>
 
-    <!-- Основной контент -->
     <div class="main-content">
-        
-        <div class="header-panel" style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="margin: 0;">Операции</h1>
+        <div class="header-panel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="margin: 0; color: var(--primary-color);">Операции</h1>
             <div>
                 <span style="color: #666;">Привет, <strong style="color: var(--primary-color);">{{ user.username }}</strong>!</span>
                 <form action="{% url 'logout' %}" method="post" style="display: inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout">Выйти</button>
+                    <button type="submit" style="background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 16px; font-weight: bold; margin-left: 15px;">Выйти</button>
                 </form>
             </div>
         </div>
 
         <!-- Плашка с суммой -->
-        <div class="total-card">
-            <h3>Всего потрачено:</h3>
-            <h2>{{ total_sum }} ₽</h2>
+        <div style="background: linear-gradient(135deg, var(--primary-color), #5a0016); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(128, 0, 32, 0.25); border-left: 6px solid var(--accent-color); margin-bottom: 20px;">
+            <h3 style="margin: 0; font-weight: normal; font-size: 16px; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Всего потрачено:</h3>
+            <h2 style="margin: 10px 0 0 0; font-size: 42px;">{{ total_sum }} ₽</h2>
         </div>
 
-        <!-- Форма добавления -->
-        <div class="card">
+        <!-- Форма добавления/редактирования -->
+        <div class="card" style="margin-bottom: 20px;">
             <h3 style="margin-top: 0; color: var(--primary-color);">{% if edit_id %}Редактировать расход{% else %}Добавить расход{% endif %}</h3>
             <form method="post">
                 {% csrf_token %}
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label>Название</label>
-                        {{ form.title }}
-                    </div>
-                    <div class="form-group">
-                        <label>Сумма (₽)</label>
-                        {{ form.amount }}
-                    </div>
+                <div class="form-group">
+                    <label>Название</label>
+                    {{ form.title }}
                 </div>
                 <div class="form-group">
+                    <label>Сумма (₽)</label>
+                    {{ form.amount }}
+                </div>
+                <div class="form-group form-group-full">
                     <label>Категория</label>
                     {{ form.category }}
                 </div>
-                <div class="form-group">
+                <div class="form-group form-group-full">
                     <label>Комментарий</label>
                     {{ form.comment }}
                 </div>
@@ -111,32 +113,30 @@
                     {% if edit_id %}Обновить{% else %}Сохранить{% endif %}
                 </button>
                 {% if edit_id %}
-                    <a href="{% url 'index' %}" style="display: inline-block; margin-left: 10px; padding: 12px 20px; background: #ccc; color: #333; text-decoration: none; border-radius: 8px; font-weight: bold;">Отмена</a>
+                    <a href="{% url 'index' %}" style="display: inline-block; margin-left: 10px; padding: 12px 20px; background: #ccc; color: #333; text-decoration: none; border-radius: 8px; font-weight: bold; justify-self: start;">Отмена</a>
                 {% endif %}
             </form>
         </div>
 
         <!-- Список расходов -->
-        <div class="expense-list">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
             {% for expense in expenses %}
-                <div class="expense-item">
-                    <div class="expense-info">
-                        <strong>{{ expense.title }}</strong> 
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--card-bg); border-radius: 10px; border-left: 5px solid var(--accent-color); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                    <div>
+                        <strong style="font-size: 18px; color: var(--text-color);">{{ expense.title }}</strong> 
                         <span style="color: #888;">({{ expense.get_category_display }})</span>
                         <br>
-                        <small>{{ expense.date }}</small>
+                        <small style="color: #888;">{{ expense.date }}</small>
                     </div>
-                    
-                    <div class="expense-actions">
-                        <span class="expense-amount">{{ expense.amount }} ₽</span>
-                        <a href="{% url 'edit_expense' expense.id %}" class="action-icon" title="Редактировать">✏️</a>
-                        <a href="{% url 'delete_expense' expense.id %}" onclick="return confirm('Удалить расход?');" class="action-icon" title="Удалить">🗑️</a>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <span style="font-weight: bold; color: var(--primary-color); font-size: 20px;">{{ expense.amount }} ₽</span>
+                        <a href="{% url 'edit_expense' expense.id %}" style="text-decoration: none; font-size: 20px; opacity: 0.5; transition: opacity 0.2s;" title="Редактировать">✏️</a>
+                        <a href="{% url 'delete_expense' expense.id %}" onclick="return confirm('Удалить расход?');" style="text-decoration: none; font-size: 20px; opacity: 0.5; transition: opacity 0.2s;" title="Удалить">🗑️</a>
                     </div>
                 </div>
             {% empty %}
                 <p style="text-align: center; color: #888; padding: 20px;">Пока нет ни одного расхода. Добавьте первый!</p>
             {% endfor %}
         </div>
-    </div>
-</body>
-</html>
+    </div> </body> </html>
+
