@@ -7,15 +7,15 @@
     <title>Мои операции | FamilyWallet</title>
     <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
     <style>
-        /* Специфичные стили для этой страницы */
+        /* Специфичные стили только для формы на этой странице */
         .card form {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Две колонки для полей */
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
         @media (max-width: 768px) {
             .card form {
-                grid-template-columns: 1fr; /* Одна колонка на телефоне */
+                grid-template-columns: 1fr;
             }
         }
         .form-group {
@@ -49,28 +49,29 @@
             font-size: 16px;
             font-weight: bold;
             transition: background 0.3s;
-            grid-column: span 2; /* Кнопка на всю ширину */
+            grid-column: span 2;
             justify-self: start;
         }
         .btn-submit:hover {
             background: var(--primary-hover);
         }
-        /* Стили для заголовков в форме */
         .form-group-full {
             grid-column: span 2;
         }
     </style>
 </head>
 <body>
+    <!-- Левая панель -->
     <div class="sidebar">
         <h2>FamilyWallet</h2>
         <a href="/wallet/" class="active">Операции</a>
         <a href="{% url 'reports' %}">Отчеты</a>
         <a href="{% url 'forecast' %}">Прогноз</a>
-        <a href="{% url 'categories' %}">Категории</a>   
+        <a href="{% url 'categories' %}">Категории</a>
         <a href="{% url 'calendar' %}">Календарь</a>
     </div>
 
+    <!-- Основной контент -->
     <div class="main-content">
         <div class="header-panel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1 style="margin: 0; color: var(--primary-color);">Операции</h1>
@@ -139,5 +140,6 @@
                 <p style="text-align: center; color: #888; padding: 20px;">Пока нет ни одного расхода. Добавьте первый!</p>
             {% endfor %}
         </div>
-    </div> </body> </html>
-
+    </div>
+</body>
+</html>
